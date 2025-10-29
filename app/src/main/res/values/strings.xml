@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Nombre de la aplicación -->
+    <string name="app_name">FleetCare OBD</string>
+
+    <!-- Pantalla principal -->
+    <string name="main_title">FleetCare OBD</string>
+    <string name="main_subtitle">Monitor de Telemetría Vehicular</string>
+
+    <!-- Navegación -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_connection">Conexión</string>
+    <string name="nav_diagnostics">Diagnóstico</string>
+    <string name="nav_settings">Configuración</string>
+
+    <!-- Conexión Bluetooth -->
+    <string name="bluetooth_title">Conexión Bluetooth</string>
+    <string name="bluetooth_scan">Escanear Dispositivos</string>
+    <string name="bluetooth_scanning">Escaneando…</string>
+    <string name="bluetooth_stop_scan">Detener Escaneo</string>
+    <string name="bluetooth_paired_devices">Dispositivos Emparejados</string>
+    <string name="bluetooth_available_devices">Dispositivos Disponibles</string>
+    <string name="bluetooth_connect">Conectar</string>
+    <string name="bluetooth_disconnect">Desconectar</string>
+    <string name="bluetooth_connected">Conectado</string>
+    <string name="bluetooth_disconnected">Desconectado</string>
+    <string name="bluetooth_connecting">Conectando…</string>
+    <string name="bluetooth_pairing">Emparejando…</string>
+    <string name="bluetooth_no_devices">No se encontraron dispositivos</string>
+    <string name="bluetooth_status">Estado de Bluetooth</string>
+
+    <!-- Estados de conexión -->
+    <string name="connection_status">Estado de Conexión</string>
+    <string name="connection_idle">Inactivo</string>
+    <string name="connection_connected">Conectado</string>
+    <string name="connection_disconnected">Desconectado</string>
+    <string name="connection_error">Error de Conexión</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard_title">Dashboard</string>
+    <string name="dashboard_rpm">RPM</string>
+    <string name="dashboard_speed">Velocidad</string>
+    <string name="dashboard_coolant_temp">Temp. Refrigerante</string>
+    <string name="dashboard_engine_load">Carga del Motor</string>
+    <string name="dashboard_throttle">Acelerador</string>
+    <string name="dashboard_fuel_level">Nivel de Combustible</string>
+    <string name="dashboard_voltage">Voltaje</string>
+    <string name="dashboard_intake_temp">Temp. Admisión</string>
+
+    <!-- Unidades -->
+    <string name="unit_rpm">RPM</string>
+    <string name="unit_kmh">km/h</string>
+    <string name="unit_mph">mph</string>
+    <string name="unit_celsius">°C</string>
+    <string name="unit_fahrenheit">°F</string>
+    <string name="unit_percent">%</string>
+    <string name="unit_volts">V</string>
+
+    <!-- Diagnóstico -->
+    <string name="diagnostics_title">Diagnóstico</string>
+    <string name="diagnostics_read_codes">Leer Códigos</string>
+    <string name="diagnostics_clear_codes">Borrar Códigos</string>
+    <string name="diagnostics_no_codes">No hay códigos de error</string>
+    <string name="diagnostics_code_count">%d código(s) encontrado(s)</string>
+    <string name="diagnostics_confirm_clear">¿Estás seguro de que deseas borrar todos los códigos de error?</string>
+
+    <!-- Configuración -->
+    <string name="settings_title">Configuración</string>
+    <string name="settings_units">Unidades</string>
+    <string name="settings_units_system">Sistema de Unidades</string>
+    <string name="settings_metric">Métrico (km/h, °C)</string>
+    <string name="settings_imperial">Imperial (mph, °F)</string>
+    <string name="settings_temperature">Unidad de Temperatura</string>
+    <string name="settings_auto_reconnect">Reconexión Automática</string>
+    <string name="settings_auto_reconnect_summary">Intentar reconectar automáticamente si se pierde la conexión</string>
+    <string name="settings_data_interval">Intervalo de Lectura</string>
+    <string name="settings_about">Acerca de</string>
+    <string name="settings_version">Versión</string>
+
+    <!-- Permisos -->
+    <string name="permission_bluetooth_title">Permiso de Bluetooth</string>
+    <string name="permission_bluetooth_message">Esta aplicación necesita permisos de Bluetooth para conectarse al dispositivo OBDII.</string>
+    <string name="permission_location_title">Permiso de Ubicación</string>
+    <string name="permission_location_message">Android requiere permiso de ubicación para escanear dispositivos Bluetooth. No se recopilan datos de ubicación.</string>
+    <string name="permission_grant">Otorgar Permiso</string>
+    <string name="permission_denied">Permiso denegado</string>
+    <string name="permission_required">Permisos requeridos para continuar</string>
+
+    <!-- Mensajes de error -->
+    <string name="error_bluetooth_not_supported">Bluetooth no es compatible con este dispositivo</string>
+    <string name="error_bluetooth_not_enabled">Por favor, habilita Bluetooth</string>
+    <string name="error_connection_failed">Error al conectar con el dispositivo</string>
+    <string name="error_device_not_found">Dispositivo no encontrado</string>
+    <string name="error_obd_init_failed">Error al inicializar adaptador OBDII</string>
+    <string name="error_no_data">No hay datos disponibles</string>
+    <string name="error_firebase">Error de conexión con Firebase</string>
+    <string name="error_network">Sin conexión a internet</string>
+    <string name="error_generic">Ha ocurrido un error</string>
+
+    <!-- Mensajes de éxito -->
+    <string name="success_connected">Conectado exitosamente</string>
+    <string name="success_disconnected">Desconectado</string>
+    <string name="success_data_synced">Datos sincronizados</string>
+    <string name="success_codes_cleared">Códigos de error borrados</string>
+
+    <!-- Diálogos -->
+    <string name="dialog_loading">Cargando…</string>
+    <string name="dialog_please_wait">Por favor, espera</string>
+    <string name="dialog_yes">Sí</string>
+    <string name="dialog_no">No</string>
+    <string name="dialog_ok">Aceptar</string>
+    <string name="dialog_cancel">Cancelar</string>
+    <string name="dialog_close">Cerrar</string>
+    <string name="dialog_retry">Reintentar</string>
+
+    <!-- Firebase y autenticación -->
+    <string name="auth_signing_in">Iniciando sesión…</string>
+    <string name="auth_anonymous">Usuario Anónimo</string>
+    <string name="auth_error">Error de autenticación</string>
+    <string name="firebase_sync_status">Estado de sincronización con Firebase</string>
+
+    <!-- Información general -->
+    <string name="app_description">Aplicación profesional para monitoreo de telemetría vehicular mediante dispositivos OBDII.</string>
+    <string name="no_data_available">No hay datos disponibles</string>
+    <string name="loading">Cargando…</string>
+    <string name="syncing">Sincronizando…</string>
+    <string name="offline">Sin conexión</string>
+    <string name="online">En línea</string>
+</resources>

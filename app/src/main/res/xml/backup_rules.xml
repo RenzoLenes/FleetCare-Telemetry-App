@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Excluir archivos sensibles del backup -->
+    <exclude domain="sharedpref" path="device_prefs" />
+    <exclude domain="database" path="vehicle_database.db" />
+</full-backup-content>

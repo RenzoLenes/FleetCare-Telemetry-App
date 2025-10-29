@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_dashboard">
+
+    <!-- Dashboard Fragment - Pantalla inicial -->
+    <fragment
+        android:id="@+id/nav_dashboard"
+        android:name="com.fleetcare.obd.ui.dashboard.DashboardFragment"
+        android:label="@string/nav_dashboard" />
+
+    <!-- Connection Fragment - Gestión de Bluetooth -->
+    <fragment
+        android:id="@+id/nav_connection"
+        android:name="com.fleetcare.obd.ui.connection.ConnectionFragment"
+        android:label="@string/nav_connection" />
+
+    <!-- Diagnostics Fragment - Códigos DTC -->
+    <fragment
+        android:id="@+id/nav_diagnostics"
+        android:name="com.fleetcare.obd.ui.diagnostics.DiagnosticsFragment"
+        android:label="@string/nav_diagnostics" />
+
+    <!-- Settings Fragment - Configuración -->
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.fleetcare.obd.ui.settings.SettingsFragment"
+        android:label="@string/nav_settings" />
+
+</navigation>

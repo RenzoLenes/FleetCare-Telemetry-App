@@ -1,0 +1,21 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Icono simple de un coche con herramienta (representa OBD y diagnóstico) -->
+    <group
+        android:scaleX="0.8"
+        android:scaleY="0.8"
+        android:translateX="10.8"
+        android:translateY="10.8">
+        <!-- Cuerpo del coche -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M42,46L66,46L70,54L74,54L74,66L70,66L70,68C70,69.1 69.1,70 68,70C66.9,70 66,69.1 66,68L66,66L46,66L46,68C46,69.1 45.1,70 44,70C42.9,70 42,69.1 42,68L42,66L38,66L38,54L42,54L42,46M44,48L44,52L68,52L68,48L44,48M40,56L40,64L44,64L44,56L40,56M68,56L68,64L72,64L72,56L68,56Z" />
+        <!-- Herramienta de diagnóstico (llave) -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M62,38L64,38L64,42L66,42L66,44L62,44L62,38M58,34L60,34L60,38L62,38L62,34L64,34L64,30L62,30L62,32L60,32L60,30L58,30L58,34Z" />
+    </group>
+</vector>
