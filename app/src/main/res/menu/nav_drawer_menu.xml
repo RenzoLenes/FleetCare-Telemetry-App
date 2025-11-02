@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <!-- Grupo Principal -->
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_dashboard"
+            android:icon="@android:drawable/ic_dialog_info"
+            android:title="@string/nav_dashboard" />
+
+        <item
+            android:id="@+id/nav_connection"
+            android:icon="@android:drawable/stat_sys_data_bluetooth"
+            android:title="@string/nav_connection" />
+
+        <item
+            android:id="@+id/nav_diagnostics"
+            android:icon="@android:drawable/ic_menu_info_details"
+            android:title="@string/nav_diagnostics" />
+    </group>
+
+    <!-- Grupo de Análisis -->
+    <group android:checkableBehavior="single">
+        <item android:title="@string/nav_group_analysis">
+            <menu>
+                <item
+                    android:id="@+id/nav_byte_analyzer"
+                    android:icon="@android:drawable/ic_menu_view"
+                    android:title="@string/nav_byte_analyzer" />
+
+                <item
+                    android:id="@+id/nav_pid_scanner"
+                    android:icon="@android:drawable/ic_menu_search"
+                    android:title="@string/nav_pid_scanner" />
+            </menu>
+        </item>
+    </group>
+
+    <!-- Grupo de PIDs Personalizados -->
+    <group android:checkableBehavior="single">
+        <item android:title="@string/nav_group_custom_pids">
+            <menu>
+                <item
+                    android:id="@+id/nav_custom_pid_manager"
+                    android:icon="@android:drawable/ic_menu_manage"
+                    android:title="@string/nav_custom_pid_manager" />
+
+                <item
+                    android:id="@+id/nav_manufacturer_pids"
+                    android:icon="@android:drawable/ic_menu_my_calendar"
+                    android:title="@string/nav_manufacturer_pids" />
+            </menu>
+        </item>
+    </group>
+
+    <!-- Configuración -->
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@android:drawable/ic_menu_preferences"
+            android:title="@string/nav_settings" />
+    </group>
+</menu>

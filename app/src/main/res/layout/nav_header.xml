@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="176dp"
+    android:background="?attr/colorPrimaryContainer"
+    android:gravity="bottom"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:theme="@style/ThemeOverlay.Material3.Dark">
+
+    <!-- Logo o icono de la app -->
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="@string/app_name"
+        android:src="@mipmap/ic_launcher" />
+
+    <!-- Nombre de la app -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_title"
+        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+        android:textColor="?attr/colorOnPrimaryContainer" />
+
+    <!-- Subtítulo -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/main_subtitle"
+        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+        android:textColor="?attr/colorOnPrimaryContainer"
+        android:alpha="0.7" />
+
+</LinearLayout>
