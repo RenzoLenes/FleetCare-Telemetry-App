@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.fleetcare.obd.R
 import com.fleetcare.obd.databinding.FragmentDashboardBinding
 import com.fleetcare.obd.domain.model.VehicleData
@@ -28,6 +30,7 @@ import kotlinx.coroutines.launch
 class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
 
     private val viewModel: DashboardViewModel by viewModels()
+    private val supportedPidsAdapter = SupportedPIDsAdapter()
 
     override fun getViewBinding(
         inflater: LayoutInflater,
@@ -54,6 +57,31 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
         binding.resetStatsButton.setOnClickListener {
             viewModel.resetFirebaseStats()
         }
+
+        // Sprint 2: Supported PIDs Card - Expandir/Colapsar
+        binding.supportedPidsHeader.setOnClickListener {
+            toggleSupportedPids()
+        }
+
+        // Sprint 2: Configurar RecyclerView de PIDs
+        binding.supportedPidsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = supportedPidsAdapter
+        }
+
+        // Sprint 2: Botón de detección
+        binding.detectPidsButton.setOnClickListener {
+            viewModel.detectSupportedPIDs(forceRefresh = false)
+        }
+
+        // Universal Scanner: Navegación
+        binding.btnUniversalScanner.setOnClickListener {
+            navigateToUniversalScanner()
+        }
+
+        binding.btnVehicleProfile.setOnClickListener {
+            navigateToVehicleProfile()
+        }
     }
 
     override fun observeData() {
@@ -68,6 +96,20 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.firebaseSyncStats.collect { stats ->
                 updateFirebaseStats(stats)
+            }
+        }
+
+        // Sprint 2: Observar PIDs detectados
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.pidCategoryItems.collect { items ->
+                updateSupportedPids(items)
+            }
+        }
+
+        // Sprint 2: Observar estado de detección
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isDetectingPIDs.collect { isDetecting ->
+                updateDetectionState(isDetecting)
             }
         }
     }
@@ -104,6 +146,10 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
         binding.firebaseSyncText.text = "Sin sincronización"
         binding.readDtcButton.isEnabled = false
 
+        // Universal Scanner buttons
+        binding.btnUniversalScanner.isEnabled = false
+        binding.btnVehicleProfile.isEnabled = false
+
         // Resetear todos los valores
         clearAllValues()
     }
@@ -124,6 +170,10 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
         )
         binding.firebaseSyncText.text = "Esperando datos..."
         binding.readDtcButton.isEnabled = true
+
+        // Universal Scanner buttons - Enable when connected
+        binding.btnUniversalScanner.isEnabled = true
+        binding.btnVehicleProfile.isEnabled = true
     }
 
     private fun showReadingState() {
@@ -282,6 +332,97 @@ class DashboardFragment : BaseFragment<FragmentDashboardBinding>() {
         } else {
             binding.lastErrorLabel.visibility = View.GONE
             binding.lastErrorValue.visibility = View.GONE
+        }
+    }
+
+    /**
+     * Sprint 2: Toggle para expandir/colapsar card de PIDs soportados.
+     */
+    private fun toggleSupportedPids() {
+        val content = binding.supportedPidsContent
+        val icon = binding.supportedPidsExpandIcon
+
+        if (content.visibility == View.GONE) {
+            content.visibility = View.VISIBLE
+            icon.rotation = 180f
+        } else {
+            content.visibility = View.GONE
+            icon.rotation = 0f
+        }
+    }
+
+    /**
+     * Sprint 2: Actualiza la lista de PIDs soportados en el RecyclerView.
+     */
+    private fun updateSupportedPids(items: List<PIDCategoryItem>) {
+        supportedPidsAdapter.submitList(items)
+
+        // Actualizar visibilidad: mostrar lista o estado vacío
+        if (items.isEmpty()) {
+            binding.supportedPidsRecyclerView.visibility = View.GONE
+            binding.supportedPidsEmptyText.visibility = View.VISIBLE
+            binding.supportedPidsSummary.text = "Toca para detectar PIDs"
+        } else {
+            binding.supportedPidsRecyclerView.visibility = View.VISIBLE
+            binding.supportedPidsEmptyText.visibility = View.GONE
+
+            // Calcular total de PIDs
+            val totalPids = items.sumOf { it.pidCount }
+            binding.supportedPidsSummary.text = "$totalPids PIDs detectados en ${items.size} categorías"
+            binding.supportedPidsSummary.setTextColor(
+                ContextCompat.getColor(requireContext(), R.color.md_theme_light_primary)
+            )
+        }
+    }
+
+    /**
+     * Sprint 2: Actualiza el estado visual durante la detección de PIDs.
+     */
+    private fun updateDetectionState(isDetecting: Boolean) {
+        if (isDetecting) {
+            binding.detectPidsProgress.visibility = View.VISIBLE
+            binding.detectPidsButton.isEnabled = false
+            binding.detectPidsButton.text = "Detectando..."
+        } else {
+            binding.detectPidsProgress.visibility = View.GONE
+            binding.detectPidsButton.isEnabled = true
+            binding.detectPidsButton.text = "Detectar PIDs Soportados"
+        }
+    }
+
+    /**
+     * Navega al Universal PID Scanner con el vehicleId actual.
+     */
+    private fun navigateToUniversalScanner() {
+        val vehicleId = getCurrentVehicleId()
+        val action = DashboardFragmentDirections.actionDashboardToUniversalScanner(vehicleId)
+        findNavController().navigate(action)
+    }
+
+    /**
+     * Navega al perfil del vehículo.
+     */
+    private fun navigateToVehicleProfile() {
+        val vehicleId = getCurrentVehicleId()
+        val action = DashboardFragmentDirections.actionDashboardToVehicleProfile(vehicleId)
+        findNavController().navigate(action)
+    }
+
+    /**
+     * Obtiene el vehicleId actual del vehículo conectado.
+     * Usa la dirección MAC del dispositivo Bluetooth como ID único.
+     */
+    private fun getCurrentVehicleId(): String {
+        val connectionState = viewModel.connectionState.value
+        return when (connectionState) {
+            is com.fleetcare.obd.domain.model.ConnectionState.Connected -> {
+                connectionState.device.address
+            }
+            else -> {
+                // Si no hay dispositivo conectado, usar un ID por defecto
+                // Esto debería prevenirse deshabilitando los botones cuando no hay conexión
+                "UNKNOWN_VEHICLE"
+            }
         }
     }
 }

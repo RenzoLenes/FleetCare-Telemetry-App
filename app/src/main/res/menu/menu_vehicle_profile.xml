@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_export_profile"
+        android:title="Export Profile"
+        android:icon="@drawable/ic_cloud_upload"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_delete_profile"
+        android:title="Delete Profile"
+        android:icon="@drawable/ic_delete"
+        app:showAsAction="never" />
+
+</menu>

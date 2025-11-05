@@ -335,6 +335,126 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Supported PIDs Card (Sprint 2) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/supportedPidsCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_small"
+            app:cardElevation="@dimen/elevation_card"
+            app:cardCornerRadius="@dimen/corner_radius_medium"
+            app:layout_constraintTop_toBottomOf="@id/firebaseDiagnosticsCard">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Header (always visible) -->
+                <LinearLayout
+                    android:id="@+id/supportedPidsHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/spacing_normal"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:id="@+id/supportedPidsIcon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_settings"
+                        app:tint="@color/md_theme_light_secondary"
+                        android:contentDescription="PIDs Soportados" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="@dimen/spacing_small">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="PIDs Soportados"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/supportedPidsSummary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Toca para detectar PIDs"
+                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                            android:textColor="@color/md_theme_light_onSurfaceVariant" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/supportedPidsExpandIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@android:drawable/arrow_down_float"
+                        app:tint="@color/md_theme_light_onSurfaceVariant"
+                        android:contentDescription="Expandir" />
+
+                </LinearLayout>
+
+                <!-- Expanded Content (initially hidden) -->
+                <LinearLayout
+                    android:id="@+id/supportedPidsContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_normal"
+                    android:visibility="gone">
+
+                    <!-- Detect Button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/detectPidsButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Detectar PIDs Soportados"
+                        android:layout_marginBottom="@dimen/spacing_normal" />
+
+                    <!-- Progress Indicator -->
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/detectPidsProgress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_normal"
+                        android:indeterminate="true"
+                        android:visibility="gone" />
+
+                    <!-- RecyclerView for PID Categories -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/supportedPidsRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false" />
+
+                    <!-- Empty State -->
+                    <TextView
+                        android:id="@+id/supportedPidsEmptyText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No hay PIDs detectados aún.\nToca el botón para detectar los PIDs soportados."
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="@color/md_theme_light_onSurfaceVariant"
+                        android:textAlignment="center"
+                        android:padding="@dimen/spacing_large"
+                        android:visibility="visible" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- RPM Gauge -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/rpmCard"
@@ -343,7 +463,7 @@
             android:layout_marginTop="@dimen/spacing_normal"
             app:cardElevation="@dimen/elevation_card"
             app:cardCornerRadius="@dimen/corner_radius_medium"
-            app:layout_constraintTop_toBottomOf="@id/firebaseDiagnosticsCard"
+            app:layout_constraintTop_toBottomOf="@id/supportedPidsCard"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/speedCard"
             app:layout_constraintWidth_percent="0.48">
@@ -393,40 +513,41 @@
             android:layout_marginStart="@dimen/spacing_small"
             app:cardElevation="@dimen/elevation_card"
             app:cardCornerRadius="@dimen/corner_radius_medium"
-            app:layout_constraintTop_toBottomOf="@id/firebaseDiagnosticsCard"
+            app:layout_constraintTop_toBottomOf="@id/supportedPidsCard"
             app:layout_constraintStart_toEndOf="@id/rpmCard"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_percent="0.48">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/spacing_normal"
-                android:gravity="center">
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_normal"
+                    android:gravity="center"
+                    android:rotationY="0">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Velocidad"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    android:textColor="@color/md_theme_light_onSurfaceVariant" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Velocidad"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="@color/md_theme_light_onSurfaceVariant" />
 
                 <TextView
-                    android:id="@+id/speedValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="--"
-                    android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
-                    android:textStyle="bold"
-                    android:layout_marginTop="@dimen/spacing_small" />
+                        android:id="@+id/speedValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                        android:textStyle="bold"
+                        android:layout_marginTop="@dimen/spacing_small" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="km/h"
-                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                    android:textColor="@color/md_theme_light_onSurfaceVariant" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="km/h"
+                        android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                        android:textColor="@color/md_theme_light_onSurfaceVariant" />
 
             </LinearLayout>
 
@@ -570,35 +691,35 @@
             app:layout_constraintWidth_percent="0.48">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/spacing_normal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Posición del Acelerador"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                    android:textColor="@color/md_theme_light_onSurfaceVariant" />
-
-                <TextView
-                    android:id="@+id/throttlePositionValue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="--"
-                    android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
-                    android:textStyle="bold"
-                    android:layout_marginTop="@dimen/spacing_small" />
-
-                <com.google.android.material.progressindicator.LinearProgressIndicator
-                    android:id="@+id/throttlePositionProgress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_small"
-                    app:indicatorColor="@color/md_theme_light_secondary"
-                    android:max="100"
-                    android:progress="0" />
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_normal">
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Posición del Acelerador"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        android:textColor="@color/md_theme_light_onSurfaceVariant" />
+
+                <TextView
+                        android:id="@+id/throttlePositionValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                        android:textStyle="bold"
+                        android:layout_marginTop="@dimen/spacing_small" />
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/throttlePositionProgress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_small"
+                        app:indicatorColor="@color/md_theme_light_secondary"
+                        android:max="100"
+                        android:progress="0" />
 
             </LinearLayout>
 
@@ -767,6 +888,67 @@
             </LinearLayout>
 
         </LinearLayout>
+
+        <!-- Universal Scanner Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/universalScannerCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_normal"
+            app:cardElevation="@dimen/elevation_card"
+            app:cardCornerRadius="@dimen/corner_radius_medium"
+            app:layout_constraintTop_toBottomOf="@id/additionalParamsLayout">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_normal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Universal PID Scanner"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="@dimen/spacing_small" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Escanea todos los PIDs soportados por tu vehículo"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    android:textColor="@color/md_theme_light_onSurfaceVariant"
+                    android:layout_marginBottom="@dimen/spacing_normal" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnUniversalScanner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Iniciar Escaneo"
+                        android:enabled="false"
+                        style="@style/Widget.Material3.Button" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnVehicleProfile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ver Perfil"
+                        android:enabled="false"
+                        android:layout_marginStart="@dimen/spacing_small"
+                        style="@style/Widget.Material3.Button.OutlinedButton" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

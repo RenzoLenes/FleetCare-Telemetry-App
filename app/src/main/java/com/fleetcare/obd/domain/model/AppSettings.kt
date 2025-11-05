@@ -7,7 +7,9 @@ data class AppSettings(
     val unitSystem: UnitSystem = UnitSystem.METRIC,
     val temperatureUnit: TemperatureUnit = TemperatureUnit.CELSIUS,
     val autoReconnect: Boolean = true,
-    val readInterval: Int = 1000 // milliseconds
+    val readInterval: Int = 1000, // milliseconds
+    val enableRawCapture: Boolean = false, // Sprint 1: Captura de respuestas RAW para análisis de PIDs
+    val rawCaptureRetentionDays: Int = 30 // Sprint 1: Días de retención de respuestas RAW
 )
 
 /**

@@ -8,7 +8,24 @@
     <fragment
         android:id="@+id/nav_dashboard"
         android:name="com.fleetcare.obd.ui.dashboard.DashboardFragment"
-        android:label="@string/nav_dashboard" />
+        android:label="@string/nav_dashboard">
+
+        <action
+            android:id="@+id/action_dashboard_to_universal_scanner"
+            app:destination="@id/nav_universal_scanner"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_dashboard_to_vehicle_profile"
+            app:destination="@id/nav_vehicle_profile"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
 
     <!-- Connection Fragment - Gestión de Bluetooth -->
     <fragment
@@ -27,5 +44,94 @@
         android:id="@+id/nav_settings"
         android:name="com.fleetcare.obd.ui.settings.SettingsFragment"
         android:label="@string/nav_settings" />
+
+    <!-- Byte Analyzer Fragment - Análisis de Bytes (Sprint 4) -->
+    <fragment
+        android:id="@+id/nav_byte_analyzer"
+        android:name="com.fleetcare.obd.ui.analysis.ByteAnalyzerFragment"
+        android:label="@string/nav_byte_analyzer" />
+
+    <!-- PID Scanner Fragment - Escáner de PIDs (Sprint 5) -->
+    <fragment
+        android:id="@+id/nav_pid_scanner"
+        android:name="com.fleetcare.obd.ui.scanner.PIDScannerFragment"
+        android:label="@string/nav_pid_scanner" />
+
+    <!-- Custom PID Manager Fragment - Gestión de PIDs Personalizados (Sprint 6) -->
+    <fragment
+        android:id="@+id/nav_custom_pid_manager"
+        android:name="com.fleetcare.obd.ui.manager.CustomPIDManagerFragment"
+        android:label="@string/nav_custom_pid_manager" />
+
+    <!-- Manufacturer PIDs Fragment - PIDs del Fabricante (Sprint 7) -->
+    <fragment
+        android:id="@+id/nav_manufacturer_pids"
+        android:name="com.fleetcare.obd.ui.manufacturer.ManufacturerPIDsFragment"
+        android:label="@string/nav_manufacturer_pids" />
+
+    <!-- Universal Scanner Fragment - Escáner Universal (Sprint 3) -->
+    <fragment
+        android:id="@+id/nav_universal_scanner"
+        android:name="com.fleetcare.obd.ui.universal_scanner.UniversalScannerFragment"
+        android:label="Universal Scanner">
+
+        <argument
+            android:name="vehicleId"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_scanner_to_results"
+            app:destination="@id/nav_scan_results"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <!-- Scan Results Fragment - Resultados del Escáner (Sprint 3) -->
+    <fragment
+        android:id="@+id/nav_scan_results"
+        android:name="com.fleetcare.obd.ui.universal_scanner.ScanResultsFragment"
+        android:label="Scan Results">
+
+        <argument
+            android:name="sessionId"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_results_to_profile"
+            app:destination="@id/nav_vehicle_profile"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <!-- Vehicle Profile Fragment - Perfil del Vehículo (Sprint 3) -->
+    <fragment
+        android:id="@+id/nav_vehicle_profile"
+        android:name="com.fleetcare.obd.ui.universal_scanner.VehicleProfileFragment"
+        android:label="Vehicle Profile">
+
+        <argument
+            android:name="vehicleId"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_profile_to_results"
+            app:destination="@id/nav_scan_results"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_profile_to_scanner"
+            app:destination="@id/nav_universal_scanner"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
 
 </navigation>

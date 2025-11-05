@@ -4,7 +4,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.room.Room
 import com.fleetcare.obd.data.local.database.AppDatabase
+import com.fleetcare.obd.data.local.database.Migrations
 import com.fleetcare.obd.utils.Constants
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,7 +62,8 @@ object AppModule {
             AppDatabase::class.java,
             Constants.Database.DATABASE_NAME
         )
-            .fallbackToDestructiveMigration() // En desarrollo, recrear DB si cambia schema
+            .addMigrations(*Migrations.ALL_MIGRATIONS) // Sprint 1: Agregar migraciones
+            .fallbackToDestructiveMigration() // Fallback solo si no hay migración disponible
             .build()
     }
 
@@ -69,6 +73,66 @@ object AppModule {
     @Provides
     @Singleton
     fun provideVehicleDataDao(database: AppDatabase) = database.vehicleDataDao()
+
+    /**
+     * Provee DAO para acceso a respuestas RAW de OBD-II.
+     * Sprint 1: Captura de respuestas para análisis de patrones.
+     */
+    @Provides
+    @Singleton
+    fun provideRawOBDResponseDao(database: AppDatabase) = database.rawOBDResponseDao()
+
+    /**
+     * Provee DAO para acceso a PIDs soportados.
+     * Sprint 2: Caché de PIDs detectados por vehículo.
+     */
+    @Provides
+    @Singleton
+    fun provideSupportedPIDsDao(database: AppDatabase) = database.supportedPIDsDao()
+
+    /**
+     * Provee DAO para acceso a PIDs personalizados.
+     * Sprint 6: Gestión de PIDs personalizados.
+     */
+    @Provides
+    @Singleton
+    fun provideCustomPIDDao(database: AppDatabase) = database.customPIDDao()
+
+    /**
+     * Provee DAO para acceso a sesiones de escaneo universal.
+     * Sprint 4-5: Universal PID Scanner.
+     */
+    @Provides
+    @Singleton
+    fun provideUniversalScanDao(database: AppDatabase) = database.universalScanDao()
+
+    /**
+     * Provee DAO para acceso a metadata de PIDs.
+     * Sprint 4-5: Universal PID Scanner - Metadata.
+     */
+    @Provides
+    @Singleton
+    fun providePIDMetadataDao(database: AppDatabase) = database.pidMetadataDao()
+
+    /**
+     * Provee DAO para acceso a perfiles de vehículos.
+     * Sprint 4-5: Universal PID Scanner - Vehicle Profiles.
+     */
+    @Provides
+    @Singleton
+    fun provideVehicleProfileDao(database: AppDatabase) = database.vehicleProfileDao()
+
+    /**
+     * Provee instancia de Gson para serialización/deserialización JSON.
+     * Sprint 6: Usado para importar/exportar PIDs personalizados.
+     */
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return GsonBuilder()
+            .setPrettyPrinting()
+            .create()
+    }
 
     /**
      * Provee Dispatcher IO para operaciones de E/S (network, database, file).

@@ -65,6 +65,25 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
             }
         }
 
+        // Sprint 1: Configurar switch de captura RAW
+        binding.enableRawCaptureSwitch.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.setEnableRawCapture(isChecked)
+        }
+
+        // Sprint 1: Configurar slider de días de retención
+        binding.retentionDaysSlider.addOnChangeListener { _, value, fromUser ->
+            if (fromUser) {
+                val days = value.toInt()
+                binding.retentionDaysText.text = "$days días"
+                viewModel.setRawCaptureRetentionDays(days)
+            }
+        }
+
+        // Sprint 1: Configurar botón de limpiar datos antiguos
+        binding.cleanOldDataButton.setOnClickListener {
+            showCleanDataConfirmationDialog()
+        }
+
         // Configurar botón de reset
         binding.resetButton.setOnClickListener {
             showResetConfirmationDialog()
@@ -75,7 +94,21 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         // Observar configuraciones
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.settings.collect { settings ->
-                updateUI(settings.unitSystem, settings.temperatureUnit, settings.autoReconnect, settings.readInterval)
+                updateUI(
+                    settings.unitSystem,
+                    settings.temperatureUnit,
+                    settings.autoReconnect,
+                    settings.readInterval,
+                    settings.enableRawCapture,
+                    settings.rawCaptureRetentionDays
+                )
+            }
+        }
+
+        // Sprint 1: Observar información de almacenamiento
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.storageInfo.collect { info ->
+                binding.storageInfoText.text = info.ifEmpty { "No hay datos almacenados" }
             }
         }
     }
@@ -84,7 +117,9 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         unitSystem: UnitSystem,
         temperatureUnit: TemperatureUnit,
         autoReconnect: Boolean,
-        readInterval: Int
+        readInterval: Int,
+        enableRawCapture: Boolean,
+        rawCaptureRetentionDays: Int
     ) {
         // Actualizar sistema de unidades
         when (unitSystem) {
@@ -104,6 +139,11 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         // Actualizar intervalo
         binding.intervalSlider.value = readInterval.toFloat()
         binding.intervalValueText.text = "$readInterval ms"
+
+        // Sprint 1: Actualizar configuración de captura RAW
+        binding.enableRawCaptureSwitch.isChecked = enableRawCapture
+        binding.retentionDaysSlider.value = rawCaptureRetentionDays.toFloat()
+        binding.retentionDaysText.text = "$rawCaptureRetentionDays días"
     }
 
     private fun showResetConfirmationDialog() {
@@ -112,6 +152,20 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
             .setMessage("¿Estás seguro de que deseas restaurar todas las configuraciones a sus valores por defecto?")
             .setPositiveButton(getString(R.string.dialog_yes)) { _, _ ->
                 viewModel.resetToDefaults()
+            }
+            .setNegativeButton(getString(R.string.dialog_no), null)
+            .show()
+    }
+
+    /**
+     * Sprint 1: Muestra diálogo de confirmación para limpiar datos RAW antiguos.
+     */
+    private fun showCleanDataConfirmationDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.settings_clean_confirmation_title))
+            .setMessage(getString(R.string.settings_clean_confirmation_message))
+            .setPositiveButton(getString(R.string.dialog_yes)) { _, _ ->
+                viewModel.cleanOldData()
             }
             .setNegativeButton(getString(R.string.dialog_no), null)
             .show()

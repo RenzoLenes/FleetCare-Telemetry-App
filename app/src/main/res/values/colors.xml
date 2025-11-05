@@ -31,6 +31,8 @@
     <color name="md_theme_light_onBackground">#1A1C1E</color>
     <color name="md_theme_light_surface">#FDFCFF</color>
     <color name="md_theme_light_onSurface">#1A1C1E</color>
+    <color name="md_theme_light_surfaceVariant">#E7E0EC</color>
+    <color name="md_theme_light_outline">#79747E</color>
 
     <!-- Colores oscuros -->
     <color name="md_theme_dark_primary">#9ECAFF</color>
@@ -52,6 +54,8 @@
     <color name="md_theme_dark_onBackground">#E2E2E6</color>
     <color name="md_theme_dark_surface">#1A1C1E</color>
     <color name="md_theme_dark_onSurface">#E2E2E6</color>
+    <color name="md_theme_dark_surfaceVariant">#49454F</color>
+    <color name="md_theme_dark_outline">#938F99</color>
 
     <!-- Colores de estado -->
     <color name="success">#4CAF50</color>
@@ -95,4 +99,31 @@
 
     <!-- Colores adicionales para Surface Variant -->
     <color name="md_theme_light_onSurfaceVariant">#44474E</color>
+
+    <!-- Scrim (overlay semi-transparente) -->
+    <color name="md_theme_light_scrim">#80000000</color>
+    <color name="md_theme_dark_scrim">#80000000</color>
+
+    <!-- Sprint 3: Universal Scanner Colors -->
+    <color name="success_green">#4CAF50</color>
+    <color name="error_red">#F44336</color>
+    <color name="warning_yellow">#FFC107</color>
+
+    <!-- Response time colors -->
+    <color name="response_excellent">#4CAF50</color>  <!-- < 200ms: Green -->
+    <color name="response_good">#FFC107</color>       <!-- 200-500ms: Yellow -->
+    <color name="response_slow">#F44336</color>       <!-- >= 500ms: Red -->
+
+    <!-- Quality score colors -->
+    <color name="quality_high">#4CAF50</color>        <!-- >= 80: Green -->
+    <color name="quality_medium">#FFC107</color>      <!-- 50-79: Yellow -->
+    <color name="quality_low">#F44336</color>         <!-- < 50: Red -->
+
+    <!-- Scan status colors -->
+    <color name="scan_idle">#757575</color>
+    <color name="scan_preparing">#2196F3</color>
+    <color name="scan_scanning">#FF9800</color>
+    <color name="scan_paused">#FFC107</color>
+    <color name="scan_completed">#4CAF50</color>
+    <color name="scan_error">#F44336</color>
 </resources>

@@ -22,6 +22,12 @@ interface VehicleRepository {
     val isReading: Flow<Boolean>
 
     /**
+     * Sprint 9.4: Set de comandos PID que no están soportados por el vehículo.
+     * Se actualiza automáticamente cuando se detectan PIDs que retornan "NO DATA".
+     */
+    val unsupportedPIDsFlow: Flow<Set<String>>
+
+    /**
      * Inicia la lectura continua de datos OBDII.
      *
      * Lee los parámetros configurados en intervalos regulares

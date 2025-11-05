@@ -2,9 +2,14 @@ package com.fleetcare.obd.bluetooth
 
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
+import com.fleetcare.obd.domain.model.AppSettings
+import com.fleetcare.obd.domain.model.RawOBDResponse
+import com.fleetcare.obd.domain.repository.RawOBDResponseRepository
 import com.fleetcare.obd.utils.Constants
 import com.fleetcare.obd.utils.Logger
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import java.io.IOException
@@ -24,9 +29,15 @@ import java.util.UUID
  * - Gestionar streams de entrada/salida
  * - Enviar y recibir datos
  * - Manejar desconexión y limpieza de recursos
+ * - Capturar respuestas RAW para análisis (Sprint 1)
  */
 class RFCOMMConnector(
-    private val bluetoothAdapter: BluetoothAdapter
+    private val bluetoothAdapter: BluetoothAdapter,
+    private val rawOBDResponseRepository: RawOBDResponseRepository?,
+    private val settingsProvider: () -> AppSettings,
+    private val vehicleIdProvider: () -> String?,
+    private val sessionIdProvider: () -> String?,
+    private val captureScope: CoroutineScope
 ) {
 
     // UUID estándar del Serial Port Profile (SPP) para Bluetooth clásico
@@ -38,6 +49,15 @@ class RFCOMMConnector(
     // Streams de comunicación
     private var inputStream: InputStream? = null
     private var outputStream: OutputStream? = null
+
+    // Comando actualmente en ejecución (para captura RAW)
+    private var currentCommand: String? = null
+
+    /**
+     * Sprint 9.3: Protocolo OBD que funcionó para este dispositivo.
+     * Se guarda para usar en futuras reconexiones.
+     */
+    var protocolUsed: String? = null
 
     /**
      * Indica si hay una conexión activa.
@@ -142,6 +162,9 @@ class RFCOMMConnector(
                 IOException("OutputStream es null")
             )
 
+            // Guardar comando actual para captura RAW
+            currentCommand = command
+
             // Los comandos ELM327 deben terminar con \r
             val commandWithTerminator = "$command\r"
             val bytes = commandWithTerminator.toByteArray()
@@ -155,9 +178,11 @@ class RFCOMMConnector(
 
         } catch (e: IOException) {
             Logger.obdError("Error al enviar comando: $command", e)
+            currentCommand = null
             Result.failure(e)
         } catch (e: Exception) {
             Logger.obdError("Error inesperado al enviar comando", e)
+            currentCommand = null
             Result.failure(e)
         }
     }
@@ -168,12 +193,17 @@ class RFCOMMConnector(
      * Lee hasta encontrar el terminador '>' que indica fin de respuesta ELM327,
      * o hasta que se agote el timeout.
      *
+     * Sprint 1: Captura respuestas RAW para análisis de patrones.
+     *
      * @param timeoutMs Timeout en milisegundos
      * @return Result con la respuesta o error
      */
     suspend fun readResponse(
         timeoutMs: Long = Constants.OBD.RESPONSE_TIMEOUT_MS
     ): Result<String> = withContext(Dispatchers.IO) {
+        val command = currentCommand
+        val startTime = System.currentTimeMillis()
+
         try {
             if (!isConnected) {
                 return@withContext Result.failure(
@@ -187,13 +217,27 @@ class RFCOMMConnector(
 
             val response = StringBuilder()
             val buffer = ByteArray(1024)
-            val startTime = System.currentTimeMillis()
+            val dataBytesList = mutableListOf<Byte>()
 
             // Leer hasta encontrar el terminador '>' o timeout
             while (true) {
                 // Verificar timeout
                 if (System.currentTimeMillis() - startTime > timeoutMs) {
                     Logger.obdError("Timeout al leer respuesta")
+
+                    // Capturar RAW incluso en caso de timeout
+                    if (command != null && response.isNotEmpty()) {
+                        captureRawResponse(
+                            command = command,
+                            rawResponse = response.toString(),
+                            dataBytes = dataBytesList.toByteArray(),
+                            latencyMs = System.currentTimeMillis() - startTime,
+                            parseSuccess = false,
+                            errorMessage = "Timeout al leer respuesta"
+                        )
+                    }
+
+                    currentCommand = null
                     return@withContext Result.failure(
                         IOException("Timeout al leer respuesta")
                     )
@@ -206,6 +250,11 @@ class RFCOMMConnector(
                         val chunk = String(buffer, 0, bytesRead)
                         response.append(chunk)
 
+                        // Guardar bytes para análisis
+                        for (i in 0 until bytesRead) {
+                            dataBytesList.add(buffer[i])
+                        }
+
                         // Verificar si hemos recibido el terminador
                         if (response.contains(Constants.OBD.RESPONSE_TERMINATOR)) {
                             break
@@ -217,19 +266,71 @@ class RFCOMMConnector(
                 }
             }
 
-            val responseStr = response.toString()
+            val endTime = System.currentTimeMillis()
+            val latencyMs = endTime - startTime
+
+            val rawResponseStr = response.toString()
+            val responseStr = rawResponseStr
                 .replace(Constants.OBD.RESPONSE_TERMINATOR, "")
                 .trim()
 
             Logger.obdCommand("Respuesta recibida", responseStr)
 
+            // Sprint 1: Capturar respuesta RAW si está habilitado
+            if (command != null) {
+                captureRawResponse(
+                    command = command,
+                    rawResponse = rawResponseStr,
+                    dataBytes = dataBytesList.toByteArray(),
+                    latencyMs = latencyMs,
+                    parseSuccess = !responseStr.contains("ERROR") &&
+                                   !responseStr.contains("NO DATA") &&
+                                   !responseStr.contains("?"),
+                    errorMessage = when {
+                        responseStr.contains("ERROR") -> "ELM327 Error"
+                        responseStr.contains("NO DATA") -> "No data from vehicle"
+                        responseStr.contains("?") -> "Unknown command"
+                        else -> null
+                    }
+                )
+            }
+
+            currentCommand = null
             Result.success(responseStr)
 
         } catch (e: IOException) {
             Logger.obdError("Error al leer respuesta", e)
+
+            // Capturar error también
+            if (command != null) {
+                captureRawResponse(
+                    command = command,
+                    rawResponse = "",
+                    dataBytes = ByteArray(0),
+                    latencyMs = System.currentTimeMillis() - startTime,
+                    parseSuccess = false,
+                    errorMessage = "IOException: ${e.message}"
+                )
+            }
+
+            currentCommand = null
             Result.failure(e)
         } catch (e: Exception) {
             Logger.obdError("Error inesperado al leer respuesta", e)
+
+            // Capturar error también
+            if (command != null) {
+                captureRawResponse(
+                    command = command,
+                    rawResponse = "",
+                    dataBytes = ByteArray(0),
+                    latencyMs = System.currentTimeMillis() - startTime,
+                    parseSuccess = false,
+                    errorMessage = "Exception: ${e.message}"
+                )
+            }
+
+            currentCommand = null
             Result.failure(e)
         }
     }
@@ -252,6 +353,91 @@ class RFCOMMConnector(
         kotlinx.coroutines.delay(Constants.OBD.COMMAND_DELAY_MS)
 
         return readResponse()
+    }
+
+    /**
+     * Captura respuesta RAW para análisis posterior.
+     *
+     * Sprint 1: Guarda la respuesta en la base de datos si está habilitado
+     * en configuración. Se ejecuta de forma asíncrona para no bloquear
+     * la comunicación OBD.
+     *
+     * @param command Comando enviado
+     * @param rawResponse Respuesta RAW completa
+     * @param dataBytes Bytes de datos recibidos
+     * @param latencyMs Latencia de la respuesta
+     * @param parseSuccess Indica si la respuesta fue exitosa
+     * @param errorMessage Mensaje de error si hubo alguno
+     */
+    private fun captureRawResponse(
+        command: String,
+        rawResponse: String,
+        dataBytes: ByteArray,
+        latencyMs: Long,
+        parseSuccess: Boolean,
+        errorMessage: String?
+    ) {
+        // Verificar si la captura RAW está habilitada
+        val settings = settingsProvider()
+        if (!settings.enableRawCapture) {
+            return
+        }
+
+        // Verificar que tenemos repository
+        val repository = rawOBDResponseRepository ?: run {
+            Logger.w("RAW capture habilitado pero repository es null")
+            return
+        }
+
+        // Obtener vehicleId y sessionId
+        val vehicleId = vehicleIdProvider() ?: run {
+            Logger.w("No se puede capturar RAW: vehicleId es null")
+            return
+        }
+
+        val sessionId = sessionIdProvider() ?: run {
+            Logger.w("No se puede capturar RAW: sessionId es null")
+            return
+        }
+
+        // Limpiar respuesta (remover espacios, líneas nuevas, prompt)
+        val cleanResponse = rawResponse
+            .replace("\r", "")
+            .replace("\n", "")
+            .replace(">", "")
+            .replace(" ", "")
+            .trim()
+
+        // Crear objeto RawOBDResponse
+        val rawOBDResponse = RawOBDResponse(
+            timestamp = System.currentTimeMillis(),
+            vehicleId = vehicleId,
+            sessionId = sessionId,
+            command = command,
+            rawResponse = rawResponse,
+            cleanResponse = cleanResponse,
+            dataBytes = dataBytes,
+            parsedValue = null, // Se parseará después en Sprint 2
+            parseSuccess = parseSuccess,
+            errorMessage = errorMessage,
+            latencyMs = latencyMs,
+            attemptNumber = 1,
+            protocolUsed = null // TODO: Detectar protocolo en uso
+        )
+
+        // Guardar de forma asíncrona en scope separado
+        captureScope.launch {
+            try {
+                val result = repository.saveRawResponse(rawOBDResponse)
+                if (result.isSuccess) {
+                    Logger.d("RAW capturado: $command -> ${cleanResponse.take(20)}... (${latencyMs}ms)")
+                } else {
+                    Logger.e("Error al guardar RAW: ${result.exceptionOrNull()?.message}")
+                }
+            } catch (e: Exception) {
+                Logger.e(e, "Excepción al capturar RAW")
+            }
+        }
     }
 
     /**

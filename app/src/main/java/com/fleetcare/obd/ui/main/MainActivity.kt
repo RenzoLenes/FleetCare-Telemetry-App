@@ -2,7 +2,9 @@ package com.fleetcare.obd.ui.main
 
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -10,6 +12,7 @@ import com.fleetcare.obd.R
 import com.fleetcare.obd.databinding.ActivityMainBinding
 import com.fleetcare.obd.utils.Logger
 import com.fleetcare.obd.utils.showToast
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -66,10 +69,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Configura el Navigation Component y la Bottom Navigation.
+     * Configura el Navigation Component, Bottom Navigation y Drawer.
      *
-     * Conecta el NavController con la BottomNavigationView para que
-     * los elementos del menú naveguen automáticamente a los fragments correspondientes.
+     * Conecta el NavController con la BottomNavigationView y NavigationView
+     * para que los elementos del menú naveguen automáticamente a los fragments correspondientes.
      */
     private fun setupNavigation() {
         // Obtener el NavHostFragment del contenedor
@@ -78,16 +81,46 @@ class MainActivity : AppCompatActivity() {
 
         val navController = navHostFragment.navController
 
+        // Configurar DrawerLayout con toggle de hamburguesa
+        val toggle = ActionBarDrawerToggle(
+            this,
+            binding.drawerLayout,
+            binding.toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        binding.drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
         // Conectar BottomNavigationView con NavController
         // Esto hace que los items del menú naveguen automáticamente
         binding.bottomNavigation.setupWithNavController(navController)
 
+        // Conectar NavigationView (drawer) con NavController
+        binding.navView.setupWithNavController(navController)
+
+        // Manejar selección de items del drawer
+        binding.navView.setNavigationItemSelectedListener { menuItem ->
+            // Navegar al destino seleccionado
+            navController.navigate(menuItem.itemId)
+
+            // Sincronizar con bottom navigation si el item existe ahí
+            binding.bottomNavigation.selectedItemId = menuItem.itemId
+
+            // Cerrar el drawer
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            true
+        }
+
         // Actualizar el título del toolbar según el destino actual
         navController.addOnDestinationChangedListener { _, destination, _ ->
             binding.toolbar.title = destination.label
+
+            // Marcar el item correspondiente en el drawer
+            binding.navView.setCheckedItem(destination.id)
         }
 
-        Logger.d("Navigation Component configurado")
+        Logger.d("Navigation Component con Drawer configurado")
     }
 
     /**
@@ -137,6 +170,19 @@ class MainActivity : AppCompatActivity() {
             message,
             Snackbar.LENGTH_LONG
         ).show()
+    }
+
+    /**
+     * Maneja el botón de retroceso.
+     * Si el drawer está abierto, lo cierra en lugar de salir de la app.
+     */
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
     }
 
     override fun onDestroy() {

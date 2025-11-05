@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- Row 1: Status, PID, Category -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="4dp">
+
+            <!-- Status Indicator -->
+            <ImageView
+                android:id="@+id/statusIndicator"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_bluetooth"
+                android:contentDescription="Status"
+                app:tint="@color/md_theme_light_primary" />
+
+            <!-- PID Hex -->
+            <TextView
+                android:id="@+id/pidText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"
+                tools:text="PID: 0C" />
+
+            <!-- PID Decimal -->
+            <TextView
+                android:id="@+id/pidDecimalText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="(12)" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- Category Chip -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/categoryChip"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                style="@style/Widget.Material3.Chip.Assist"
+                app:chipMinHeight="24dp"
+                app:chipIconSize="12dp"
+                tools:text="Engine" />
+
+        </LinearLayout>
+
+        <!-- Row 2: Command -->
+        <TextView
+            android:id="@+id/commandText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            tools:text="Command: 010C" />
+
+        <!-- Row 3: Interpretation/Name -->
+        <TextView
+            android:id="@+id/interpretationText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textColor="?attr/colorOnSurface"
+            tools:text="Engine RPM" />
+
+        <!-- Row 4: Raw Response -->
+        <TextView
+            android:id="@+id/rawResponseText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+            android:fontFamily="monospace"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:background="@color/md_theme_light_surfaceVariant"
+            android:padding="6dp"
+            android:layout_marginTop="4dp"
+            tools:text="Response: 41 0C 1A F8" />
+
+        <!-- Row 5: Metadata (Latency, Bytes, Standard) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Latency -->
+            <TextView
+                android:id="@+id/latencyText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="125ms" />
+
+            <!-- Separator -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="6dp"
+                android:text="•"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <!-- Byte Count -->
+            <TextView
+                android:id="@+id/byteCountText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="4 bytes" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+            <!-- Standard PID Chip -->
+            <com.google.android.material.chip.Chip
+                android:id="@+id/standardChip"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="Standard"
+                android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                style="@style/Widget.Material3.Chip.Assist"
+                app:chipMinHeight="20dp"
+                app:chipIconSize="10dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

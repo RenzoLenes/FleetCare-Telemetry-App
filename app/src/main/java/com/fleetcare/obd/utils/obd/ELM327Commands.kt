@@ -89,6 +89,40 @@ object ELM327Commands {
          * Ejemplo: ATST32 = 32 * 4ms = 128ms timeout
          */
         fun setTimeout(value: Int) = "ATST$value"
+
+        /**
+         * Timeout de 200ms para ECUs lentos.
+         * ATST50 = 50 * 4ms = 200ms
+         * Sprint 9.1: Mejora compatibilidad con vehículos como Suzuki Ertiga 2018.
+         */
+        const val SET_TIMEOUT_50 = "ATST50"
+
+        /**
+         * Adaptive Timing Auto 1 (recomendado).
+         * Permite al ELM327 ajustar automáticamente el tiempo de espera
+         * basado en las respuestas del ECU. Útil para ECUs con tiempos variables.
+         * Sprint 9.1: Mejora estabilidad de conexión.
+         */
+        const val ADAPTIVE_TIMING_AUTO1 = "ATAT1"
+
+        /**
+         * Adaptive Timing Auto 2 (más agresivo).
+         * Similar a AT1 pero con ajustes más rápidos. Usar solo si AT1 no funciona.
+         */
+        const val ADAPTIVE_TIMING_AUTO2 = "ATAT2"
+
+        /**
+         * Desactiva Adaptive Timing.
+         * Usar solo si el adaptive timing causa problemas.
+         */
+        const val ADAPTIVE_TIMING_OFF = "ATAT0"
+
+        /**
+         * Describe el protocolo numérico actual (solo número).
+         * Ejemplo de respuesta: "6" para ISO 15765-4 CAN (11 bit, 500 kbaud)
+         * Sprint 9.1: Útil para logging y diagnóstico.
+         */
+        const val DESCRIBE_PROTOCOL_NUMBER = "ATDPN"
     }
 
     /**
@@ -321,19 +355,129 @@ object ELM327Commands {
         const val GET_CVN = "0906"
     }
 
+    // ========== SPRINT 9.3: PROTOCOL FALLBACK ==========
+
+    /**
+     * Lista de protocolos CAN para fallback manual.
+     *
+     * Sprint 9.3: Si ATSP0 (auto-detección) falla, se prueban estos protocolos
+     * en orden hasta encontrar uno que funcione.
+     *
+     * Orden de probabilidad (de más a menos común):
+     * 1. Protocolo 6: CAN 11-bit 500kbaud (más común en vehículos modernos)
+     * 2. Protocolo 7: CAN 29-bit 500kbaud
+     * 3. Protocolo 8: CAN 11-bit 250kbaud (algunos vehículos asiáticos)
+     * 4. Protocolo 9: CAN 29-bit 250kbaud
+     *
+     * Cada entrada es un par (número de protocolo, descripción legible).
+     */
+    val CAN_PROTOCOLS = listOf(
+        "6" to "ISO 15765-4 CAN (11 bit, 500 kbaud)",
+        "7" to "ISO 15765-4 CAN (29 bit, 500 kbaud)",
+        "8" to "ISO 15765-4 CAN (11 bit, 250 kbaud)",
+        "9" to "ISO 15765-4 CAN (29 bit, 250 kbaud)"
+    )
+
+    /**
+     * Lista completa de protocolos para fallback, incluyendo legacy.
+     *
+     * Sprint 9.X: Orden de probabilidad para máxima compatibilidad:
+     * 1. Protocolos CAN modernos (6-9) - más comunes en vehículos post-2008
+     * 2. Protocolos KWP (4-5) - comunes en vehículos asiáticos/europeos 2000-2010
+     * 3. Protocolo ISO 9141-2 (3) - vehículos asiáticos 1996-2005
+     * 4. Protocolos SAE J1850 (1-2) - vehículos americanos 1996-2008
+     * 5. Protocolos CAN especiales (A-C) - camiones y vehículos industriales
+     */
+    val FALLBACK_PROTOCOLS = listOf(
+        // CAN primero (más comunes)
+        "6" to "ISO 15765-4 CAN (11 bit, 500 kbaud)",
+        "7" to "ISO 15765-4 CAN (29 bit, 500 kbaud)",
+        "8" to "ISO 15765-4 CAN (11 bit, 250 kbaud)",
+        "9" to "ISO 15765-4 CAN (29 bit, 250 kbaud)",
+        // KWP (vehículos asiáticos/europeos)
+        "5" to "ISO 14230-4 KWP (fast init)",
+        "4" to "ISO 14230-4 KWP (5 baud init)",
+        // ISO 9141-2 (vehículos asiáticos antiguos)
+        "3" to "ISO 9141-2 (5 baud init)",
+        // SAE J1850 (vehículos americanos)
+        "2" to "SAE J1850 VPW (10.4 kbaud)",
+        "1" to "SAE J1850 PWM (41.6 kbaud)",
+        // CAN especiales (menos común)
+        "A" to "SAE J1939 CAN (29 bit, 250 kbaud)",
+        "B" to "USER1 CAN (11 bit, 125 kbaud)",
+        "C" to "USER2 CAN (11 bit, 50 kbaud)"
+    )
+
+    /**
+     * Todos los protocolos OBD soportados por ELM327.
+     *
+     * Referencia completa para diagnóstico avanzado:
+     * 0 = Automático
+     * 1 = SAE J1850 PWM (41.6 kbaud)
+     * 2 = SAE J1850 VPW (10.4 kbaud)
+     * 3 = ISO 9141-2 (5 baud init)
+     * 4 = ISO 14230-4 KWP (5 baud init)
+     * 5 = ISO 14230-4 KWP (fast init)
+     * 6 = ISO 15765-4 CAN (11 bit ID, 500 kbaud)
+     * 7 = ISO 15765-4 CAN (29 bit ID, 500 kbaud)
+     * 8 = ISO 15765-4 CAN (11 bit ID, 250 kbaud)
+     * 9 = ISO 15765-4 CAN (29 bit ID, 250 kbaud)
+     * A = SAE J1939 CAN (29 bit ID, 250 kbaud)
+     * B = USER1 CAN (11 bit ID, 125 kbaud)
+     * C = USER2 CAN (11 bit ID, 50 kbaud)
+     */
+    val ALL_PROTOCOLS = mapOf(
+        "0" to "Automático",
+        "1" to "SAE J1850 PWM (41.6 kbaud)",
+        "2" to "SAE J1850 VPW (10.4 kbaud)",
+        "3" to "ISO 9141-2 (5 baud init)",
+        "4" to "ISO 14230-4 KWP (5 baud init)",
+        "5" to "ISO 14230-4 KWP (fast init)",
+        "6" to "ISO 15765-4 CAN (11 bit, 500 kbaud)",
+        "7" to "ISO 15765-4 CAN (29 bit, 500 kbaud)",
+        "8" to "ISO 15765-4 CAN (11 bit, 250 kbaud)",
+        "9" to "ISO 15765-4 CAN (29 bit, 250 kbaud)",
+        "A" to "SAE J1939 CAN (29 bit, 250 kbaud)",
+        "B" to "USER1 CAN (11 bit, 125 kbaud)",
+        "C" to "USER2 CAN (11 bit, 50 kbaud)"
+    )
+
+    /**
+     * Comando para establecer protocolo específico.
+     * @param protocolNumber Número del protocolo (0-9, A-C)
+     */
+    fun setProtocol(protocolNumber: String) = "ATSP$protocolNumber"
+
     /**
      * Secuencia de inicialización recomendada para el ELM327.
+     *
+     * Sprint 9.1: Secuencia mejorada para compatibilidad con ECUs lentos y diagnóstico.
+     *
+     * Orden de comandos:
+     * 1. RESET - Limpia cualquier configuración previa
+     * 2. ECHO_OFF - Evita que el adaptador repita comandos
+     * 3. LINEFEED_OFF - Simplifica parsing de respuestas
+     * 4. SET_TIMEOUT_50 - 200ms de timeout para ECUs lentos (Suzuki Ertiga, etc.)
+     * 5. ADAPTIVE_TIMING_AUTO1 - Ajusta tiempos automáticamente según el ECU
+     * 6. HEADERS_ON - Permite ver headers CAN para diagnóstico y parsing multi-frame
+     * 7. SPACES_OFF - Respuestas compactas sin espacios
+     * 8. AUTO_PROTOCOL - Detecta automáticamente el protocolo del vehículo
+     * 9. ALLOW_LONG_MESSAGES - Necesario para respuestas multi-frame (VIN, DTCs)
+     * 10. DESCRIBE_PROTOCOL - Loguea el protocolo detectado para diagnóstico
      *
      * Esta secuencia configura el adaptador en modo óptimo para OBDII.
      */
     val INITIALIZATION_SEQUENCE = listOf(
-        Initialization.RESET,                // Reset del dispositivo
-        Initialization.ECHO_OFF,             // Desactivar eco
-        Initialization.LINEFEED_OFF,         // Desactivar linefeeds
-        Initialization.SPACES_OFF,           // Desactivar espacios (respuestas más compactas)
-        Initialization.HEADERS_OFF,          // Desactivar headers
-        Initialization.AUTO_PROTOCOL,        // Auto-detectar protocolo
-        Initialization.ALLOW_LONG_MESSAGES   // Permitir mensajes largos
+        Initialization.RESET,                    // 1. Reset del dispositivo
+        Initialization.ECHO_OFF,                 // 2. Desactivar eco
+        Initialization.LINEFEED_OFF,             // 3. Desactivar linefeeds
+        Initialization.SET_TIMEOUT_50,           // 4. Timeout 200ms (Sprint 9.1)
+        Initialization.ADAPTIVE_TIMING_AUTO1,    // 5. Adaptive timing (Sprint 9.1)
+        Initialization.HEADERS_ON,               // 6. Headers ON para CAN (Sprint 9.1)
+        Initialization.SPACES_OFF,               // 7. Desactivar espacios
+        Initialization.AUTO_PROTOCOL,            // 8. Auto-detectar protocolo
+        Initialization.ALLOW_LONG_MESSAGES,      // 9. Permitir mensajes largos
+        Initialization.DESCRIBE_PROTOCOL         // 10. Verificar protocolo (Sprint 9.1)
     )
 
     /**

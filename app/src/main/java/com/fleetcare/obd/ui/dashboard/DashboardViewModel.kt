@@ -7,6 +7,9 @@ import com.fleetcare.obd.domain.model.VehicleData
 import com.fleetcare.obd.domain.repository.BluetoothRepository
 import com.fleetcare.obd.domain.repository.DiagnosticRepository
 import com.fleetcare.obd.domain.repository.VehicleRepository
+import com.fleetcare.obd.domain.model.PIDRangeCategory
+import com.fleetcare.obd.domain.model.SupportedPIDsBitmap
+import com.fleetcare.obd.domain.usecase.DetectSupportedPIDsUseCase
 import com.fleetcare.obd.domain.usecase.ReadDTCsUseCase
 import com.fleetcare.obd.domain.usecase.ReadVehicleDataUseCase
 import com.fleetcare.obd.domain.usecase.SendDataToFirebaseUseCase
@@ -35,7 +38,8 @@ class DashboardViewModel @Inject constructor(
     private val diagnosticRepository: DiagnosticRepository,
     private val readVehicleDataUseCase: ReadVehicleDataUseCase,
     private val sendDataToFirebaseUseCase: SendDataToFirebaseUseCase,
-    private val readDTCsUseCase: ReadDTCsUseCase
+    private val readDTCsUseCase: ReadDTCsUseCase,
+    private val detectSupportedPIDsUseCase: DetectSupportedPIDsUseCase // Sprint 2
 ) : BaseViewModel() {
 
     /**
@@ -72,6 +76,30 @@ class DashboardViewModel @Inject constructor(
      * Estadísticas de sincronización con Firebase para diagnóstico.
      */
     val firebaseSyncStats = sendDataToFirebaseUseCase.syncStats
+
+    /**
+     * Sprint 2: PIDs soportados por el vehículo.
+     */
+    private val _supportedPIDs = MutableStateFlow<SupportedPIDsBitmap?>(null)
+    val supportedPIDs: StateFlow<SupportedPIDsBitmap?> = _supportedPIDs.asStateFlow()
+
+    /**
+     * Sprint 2: Indica si se están detectando PIDs.
+     */
+    private val _isDetectingPIDs = MutableStateFlow(false)
+    val isDetectingPIDs: StateFlow<Boolean> = _isDetectingPIDs.asStateFlow()
+
+    /**
+     * Sprint 2: Items para mostrar en la lista de PIDs por categoría.
+     */
+    val pidCategoryItems: StateFlow<List<PIDCategoryItem>> =
+        _supportedPIDs.map { bitmap ->
+            bitmap?.let { convertToCategoryItems(it) } ?: emptyList()
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
     /**
      * Estado combinado de conexión y lectura para la UI.
@@ -118,6 +146,17 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             connectionState.collectLatest { state ->
                 if (state is ConnectionState.Connected && state.isOBDInitialized) {
+                    // Sprint 9.5: Detectar PIDs soportados automáticamente al conectar
+                    val currentBitmap = _supportedPIDs.value
+                    Logger.d("Estado de bitmap al conectar: ${if (currentBitmap == null) "null" else "${currentBitmap.getTotalSupportedCount()} PIDs"}")
+
+                    if (currentBitmap == null || currentBitmap.getTotalSupportedCount() == 0) {
+                        Logger.d("Conexión establecida, detectando PIDs soportados...")
+                        detectSupportedPIDs(forceRefresh = false)
+                    } else {
+                        Logger.d("Bitmap ya cargado, usando caché con ${currentBitmap.getTotalSupportedCount()} PIDs")
+                    }
+
                     // Auto-iniciar lectura cuando se establece conexión
                     if (!isReading.value) {
                         startReading()
@@ -267,6 +306,79 @@ class DashboardViewModel @Inject constructor(
                 emitError("Debes estar conectado para realizar el test")
             }
         }
+    }
+
+    /**
+     * Sprint 2: Detecta los PIDs soportados por el vehículo.
+     *
+     * @param forceRefresh Forzar nueva detección ignorando caché
+     */
+    fun detectSupportedPIDs(forceRefresh: Boolean = false) {
+        Logger.d("🔍 detectSupportedPIDs llamado (forceRefresh=$forceRefresh)")
+
+        val currentState = connectionState.value
+        if (currentState !is ConnectionState.Connected) {
+            Logger.w("No se puede detectar PIDs: no hay conexión activa")
+            emitError("Debes estar conectado para detectar PIDs")
+            return
+        }
+
+        Logger.d("🔍 Conexión verificada, iniciando detección...")
+
+        launchWithLoading(showLoading = false) {
+            _isDetectingPIDs.value = true
+            Logger.d("🔍 Iniciando detección de PIDs soportados (forceRefresh=$forceRefresh)...")
+
+            val result = detectSupportedPIDsUseCase.execute(
+                vehicleId = currentState.device.address,
+                vin = null, // TODO: Obtener VIN si está disponible
+                forceRefresh = forceRefresh
+            )
+
+            result.onSuccess { bitmap ->
+                _supportedPIDs.value = bitmap
+                Logger.i("✅ PIDs detectados exitosamente: ${bitmap.getTotalSupportedCount()} PIDs soportados")
+                Logger.d("   PIDs: ${bitmap.allSupportedPIDs.joinToString(", ") { "0x${it.toString(16).uppercase()}" }}")
+                emitSuccess("${bitmap.getTotalSupportedCount()} PIDs detectados")
+            }.onFailure { exception ->
+                Logger.e(exception, "❌ Error al detectar PIDs soportados")
+                emitError("Error al detectar PIDs: ${exception.message}")
+            }
+
+            _isDetectingPIDs.value = false
+            Logger.d("🔍 Detección de PIDs finalizada")
+        }
+    }
+
+    /**
+     * Sprint 2: Convierte el bitmap de PIDs a items de categorías para la UI.
+     */
+    private fun convertToCategoryItems(bitmap: SupportedPIDsBitmap): List<PIDCategoryItem> {
+        val grouped = bitmap.groupByCategory()
+
+        return grouped.map { (category, pids) ->
+            val categoryName = when (category) {
+                PIDRangeCategory.ENGINE -> "Motor"
+                PIDRangeCategory.FUEL -> "Combustible y Aire"
+                PIDRangeCategory.EMISSIONS -> "Emisiones"
+                PIDRangeCategory.TRANSMISSION -> "Transmisión"
+                PIDRangeCategory.HYBRID -> "Sistema Híbrido"
+                PIDRangeCategory.EXTENDED -> "Extendido"
+                PIDRangeCategory.MANUFACTURER -> "Fabricante"
+                PIDRangeCategory.UNKNOWN -> "Otros"
+            }
+
+            val pidListFormatted = pids.joinToString(", ") {
+                "0x${it.toString(16).uppercase().padStart(2, '0')}"
+            }
+
+            PIDCategoryItem(
+                category = category,
+                categoryName = categoryName,
+                pidCount = pids.size,
+                pidListFormatted = pidListFormatted
+            )
+        }.sortedBy { it.category.ordinal }
     }
 
     override fun onCleared() {

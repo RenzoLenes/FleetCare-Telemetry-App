@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_export_json"
+        android:title="Export to JSON"
+        android:icon="@drawable/ic_cloud_upload"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_export_csv"
+        android:title="Export to CSV"
+        android:icon="@drawable/ic_cloud_upload"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_share"
+        android:title="Share Results"
+        android:icon="@drawable/ic_share"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_filter"
+        android:title="Filter"
+        android:icon="@drawable/ic_filter"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_reset_filters"
+        android:title="Reset Filters"
+        android:icon="@drawable/ic_close"
+        app:showAsAction="never" />
+
+</menu>

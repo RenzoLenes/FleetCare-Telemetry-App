@@ -109,14 +109,31 @@ object Constants {
 
     // Error Messages
     object ErrorMessages {
+        // Sprint 9.6: Mensajes mejorados con sugerencias útiles
         const val BLUETOOTH_NOT_AVAILABLE = "Bluetooth no está disponible en este dispositivo"
-        const val BLUETOOTH_NOT_ENABLED = "Por favor, habilita Bluetooth"
-        const val CONNECTION_FAILED = "No se pudo conectar al dispositivo OBDII"
-        const val DEVICE_NOT_FOUND = "Dispositivo no encontrado"
-        const val NO_PERMISSIONS = "Permisos necesarios no otorgados"
-        const val OBD_INIT_FAILED = "Error al inicializar el adaptador OBDII"
-        const val FIREBASE_CONNECTION_ERROR = "Error de conexión con Firebase"
-        const val NETWORK_UNAVAILABLE = "Sin conexión a internet"
+
+        const val BLUETOOTH_NOT_ENABLED = "Por favor, habilita Bluetooth en los ajustes de tu dispositivo"
+
+        const val CONNECTION_FAILED = "No se pudo conectar al adaptador OBD-II.\n" +
+                "Verifica que:\n" +
+                "• El adaptador esté encendido\n" +
+                "• Estés dentro del rango de Bluetooth\n" +
+                "• El adaptador no esté conectado a otro dispositivo"
+
+        const val DEVICE_NOT_FOUND = "Adaptador no encontrado. Asegúrate de que esté encendido y cerca del teléfono"
+
+        const val NO_PERMISSIONS = "La app necesita permisos de Bluetooth para funcionar.\n" +
+                "Por favor, otorga los permisos en los ajustes de la app"
+
+        const val OBD_INIT_FAILED = "Error al inicializar el adaptador OBD-II.\n" +
+                "Verifica que:\n" +
+                "• El motor del vehículo esté encendido\n" +
+                "• El adaptador esté bien conectado al puerto OBD\n" +
+                "• El vehículo sea compatible con OBD-II (año 2008+)"
+
+        const val FIREBASE_CONNECTION_ERROR = "Error al sincronizar con la nube. Verifica tu conexión a internet"
+
+        const val NETWORK_UNAVAILABLE = "Sin conexión a internet. Los datos se guardarán localmente"
     }
 
     // Success Messages

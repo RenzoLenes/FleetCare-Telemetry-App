@@ -4,6 +4,7 @@ plugins {
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -119,6 +120,16 @@ dependencies {
 
     // Gson para parsing JSON
     implementation("com.google.code.gson:gson:2.10.1")
+
+    // exp4j para evaluación de expresiones matemáticas (Sprint 4-5: Byte Analyzer)
+    implementation("net.objecthunter:exp4j:0.4.8")
+
+    // MPAndroidChart para gráficos (Sprint 4.6)
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    // ZXing para QR Code (Sprint 6.7)
+    implementation("com.google.zxing:core:3.5.2")
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
 
     // Testing
     testImplementation("junit:junit:4.13.2")

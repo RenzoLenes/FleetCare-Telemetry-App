@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"C:\\Users\\Renzo\\Desktop\\Aprendiendo\\kotlin\\FleetCareOBD\\app\\src\\main\\res\\drawable\\search_view_background.xml\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

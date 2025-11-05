@@ -21,6 +21,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <!-- Permiso de Cámara para escaneo de QR Code (Sprint 6.7) -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <!-- Hardware features - Bluetooth es requerido -->
     <uses-feature
         android:name="android.hardware.bluetooth"
@@ -28,6 +31,14 @@
 
     <uses-feature
         android:name="android.hardware.location"
+        android:required="false" />
+
+    <!-- Cámara es opcional para QR Code -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
         android:required="false" />
 
     <application
@@ -53,6 +64,13 @@
             </intent-filter>
         </activity>
 
+        <!-- QR Scanner Activity (Sprint 6.7) -->
+        <activity
+            android:name=".ui.manager.QRScannerActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.FleetCareOBD" />
+
         <!-- Receiver para eventos de Bluetooth -->
         <receiver
             android:name=".bluetooth.BluetoothStateReceiver"
@@ -64,6 +82,17 @@
                 <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
             </intent-filter>
         </receiver>
+
+        <!-- FileProvider para compartir archivos (Sprint 6.7) -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
 

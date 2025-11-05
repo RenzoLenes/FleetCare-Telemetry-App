@@ -12,6 +12,17 @@
     <string name="nav_connection">Conexión</string>
     <string name="nav_diagnostics">Diagnóstico</string>
     <string name="nav_settings">Configuración</string>
+    <string name="nav_byte_analyzer">Análisis de Bytes</string>
+    <string name="nav_pid_scanner">Escáner PIDs</string>
+    <string name="nav_custom_pid_manager">PIDs Personalizados</string>
+
+    <!-- Grupos del Navigation Drawer -->
+    <string name="nav_group_analysis">Análisis</string>
+    <string name="nav_group_custom_pids">PIDs Personalizados</string>
+
+    <!-- Navigation Drawer -->
+    <string name="navigation_drawer_open">Abrir menú de navegación</string>
+    <string name="navigation_drawer_close">Cerrar menú de navegación</string>
 
     <!-- Conexión Bluetooth -->
     <string name="bluetooth_title">Conexión Bluetooth</string>
@@ -126,4 +137,109 @@
     <string name="syncing">Sincronizando…</string>
     <string name="offline">Sin conexión</string>
     <string name="online">En línea</string>
+
+    <!-- Sprint 1: RAW Capture Settings -->
+    <string name="settings_raw_capture_title">Captura RAW de Datos</string>
+    <string name="settings_enable_raw_capture">Habilitar captura de respuestas RAW</string>
+    <string name="settings_raw_capture_description">Almacena respuestas sin procesar de OBD-II para análisis de patrones y detección de PIDs soportados. Útil para desarrollo y diagnóstico avanzado.</string>
+    <string name="settings_retention_days">Días de retención</string>
+    <string name="settings_storage_info">Información de almacenamiento</string>
+    <string name="settings_clean_old_data">Limpiar datos antiguos</string>
+    <string name="settings_clean_confirmation_title">Limpiar datos RAW</string>
+    <string name="settings_clean_confirmation_message">¿Estás seguro de que deseas eliminar los datos RAW antiguos? Esta acción no se puede deshacer.</string>
+    <string name="settings_data_cleaned">Datos RAW limpiados exitosamente</string>
+
+    <!-- Sprint 6.7: QR Code -->
+    <string name="qr_code">Código QR</string>
+    <string name="qr_instructions">Escanea este código QR para importar el PID personalizado en otro dispositivo</string>
+    <string name="share">Compartir</string>
+    <string name="save">Guardar</string>
+    <string name="share_pid_qr">Compartir PID (QR)</string>
+    <string name="qr_generation_success">Código QR generado exitosamente</string>
+    <string name="qr_generation_error">Error al generar código QR</string>
+
+    <!-- Sprint 7: Manufacturer PIDs -->
+    <string name="nav_manufacturer_pids">PIDs Fabricante</string>
+    <string name="manufacturer_pids_title">PIDs del Fabricante</string>
+    <string name="manufacturer_pids_subtitle">PIDs propietarios del Modo 22</string>
+    <string name="detect_vehicle">Detectar Vehículo (VIN)</string>
+    <string name="test_pid">Probar</string>
+    <string name="save_as_custom">Guardar como Personalizado</string>
+    <string name="mode_22_support">Soporte Modo 22</string>
+
+    <!-- Sprint 3: Universal Scanner -->
+    <string name="universal_scanner_title">Escáner Universal</string>
+    <string name="scan_presets">Presets de Escaneo</string>
+    <string name="quick_scan">Escaneo Rápido</string>
+    <string name="full_standard_scan">Escaneo Completo</string>
+    <string name="deep_scan">Escaneo Profundo</string>
+    <string name="legacy_scan">Escaneo Legacy</string>
+    <string name="manufacturer_scan">Escaneo Fabricante</string>
+    <string name="recommended_scan">Recomendado</string>
+    <string name="start_scan">Iniciar Escaneo</string>
+    <string name="pause_scan">Pausar</string>
+    <string name="resume_scan">Reanudar</string>
+    <string name="cancel_scan">Cancelar</string>
+    <string name="view_results">Ver Resultados</string>
+
+    <!-- Scan Results -->
+    <string name="scan_results_title">Resultados del Escaneo</string>
+    <string name="scan_session">Sesión</string>
+    <string name="pids_found">PIDs encontrados</string>
+    <string name="scan_duration">Duración</string>
+    <string name="success_rate">Tasa de éxito</string>
+    <string name="quality_score">Calidad</string>
+    <string name="avg_response_time">Tiempo promedio de respuesta</string>
+    <string name="mode_distribution">Distribución de modos</string>
+    <string name="filter_success_only">Solo exitosos</string>
+    <string name="sort_by">Ordenar por</string>
+    <string name="group_by">Agrupar por</string>
+    <string name="export_json">Exportar a JSON</string>
+    <string name="export_csv">Exportar a CSV</string>
+    <string name="share_results">Compartir resultados</string>
+
+    <!-- Vehicle Profile -->
+    <string name="vehicle_profile_title">Perfil del Vehículo</string>
+    <string name="overview">Resumen</string>
+    <string name="metadata">Metadatos</string>
+    <string name="history">Historial</string>
+    <string name="vehicle_info">Información del Vehículo</string>
+    <string name="ecu_info">Información ECU</string>
+    <string name="supported_pids">PIDs Soportados</string>
+    <string name="high_quality_pids">Alta Calidad</string>
+    <string name="real_time_ready">Listo para tiempo real</string>
+    <string name="total_scans">Escaneos totales</string>
+    <string name="average_quality">Calidad promedio</string>
+    <string name="last_scanned">Último escaneo</string>
+    <string name="edit_vehicle_info">Editar información</string>
+    <string name="delete_profile">Eliminar perfil</string>
+    <string name="export_profile">Exportar perfil</string>
+    <string name="profile_complete">Perfil completo</string>
+    <string name="profile_incomplete">Perfil incompleto</string>
+
+    <!-- Scan Progress -->
+    <string name="scanning_mode">Escaneando modo %s...</string>
+    <string name="scan_completed">Escaneo completado</string>
+    <string name="scan_cancelled">Escaneo cancelado</string>
+    <string name="scan_paused">Escaneo pausado</string>
+    <string name="scan_error">Error en escaneo</string>
+    <string name="elapsed_time">Tiempo transcurrido</string>
+    <string name="remaining_time">Tiempo restante</string>
+    <string name="successful">Exitosos</string>
+    <string name="failed">Fallidos</string>
+    <string name="skipped">Omitidos</string>
+
+    <!-- Sort Options -->
+    <string name="sort_pid_asc">PID (A-Z)</string>
+    <string name="sort_pid_desc">PID (Z-A)</string>
+    <string name="sort_mode_asc">Modo (ascendente)</string>
+    <string name="sort_response_time_asc">Tiempo de respuesta (rápido)</string>
+    <string name="sort_response_time_desc">Tiempo de respuesta (lento)</string>
+    <string name="sort_timestamp">Marca de tiempo</string>
+
+    <!-- Group Options -->
+    <string name="group_none">Sin agrupar</string>
+    <string name="group_mode">Por modo</string>
+    <string name="group_data_type">Por tipo de dato</string>
+    <string name="group_success">Por resultado</string>
 </resources>

@@ -40,6 +40,7 @@
     <dimen name="card_corner_radius">12dp</dimen>
     <dimen name="card_elevation">4dp</dimen>
     <dimen name="elevation_card">4dp</dimen>
+    <dimen name="elevation_card_small">2dp</dimen>
     <dimen name="corner_radius_small">8dp</dimen>
     <dimen name="corner_radius_medium">12dp</dimen>
 

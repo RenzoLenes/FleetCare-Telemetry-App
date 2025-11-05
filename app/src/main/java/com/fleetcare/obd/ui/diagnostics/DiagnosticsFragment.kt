@@ -44,11 +44,21 @@ class DiagnosticsFragment : BaseFragment<FragmentDiagnosticsBinding>() {
 
         // Configurar botones
         binding.readDtcButton.setOnClickListener {
-            viewModel.readDTCs()
+            // Verificar que haya conexión antes de leer DTCs
+            if (isBluetoothConnected()) {
+                viewModel.readDTCs()
+            } else {
+                showError("No hay conexión Bluetooth. Conecta un dispositivo OBD-II primero.")
+            }
         }
 
         binding.clearDtcButton.setOnClickListener {
-            showClearConfirmationDialog()
+            // Verificar que haya conexión antes de borrar DTCs
+            if (isBluetoothConnected()) {
+                showClearConfirmationDialog()
+            } else {
+                showError("No hay conexión Bluetooth. Conecta un dispositivo OBD-II primero.")
+            }
         }
     }
 
@@ -156,5 +166,16 @@ class DiagnosticsFragment : BaseFragment<FragmentDiagnosticsBinding>() {
             }
             .setNegativeButton(getString(R.string.dialog_no), null)
             .show()
+    }
+
+    /**
+     * Verifica si hay una conexión Bluetooth activa.
+     * Nota: Esta es una verificación simplificada. En producción se debería
+     * observar el estado de conexión del BluetoothService.
+     */
+    private fun isBluetoothConnected(): Boolean {
+        // Por ahora asumimos que si el Fragment está visible, hay conexión
+        // TODO: Implementar observación real del estado de conexión
+        return true
     }
 }

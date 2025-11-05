@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Solo 5 items principales para BottomNavigationView -->
     <item
         android:id="@+id/nav_dashboard"
         android:icon="@android:drawable/ic_dialog_info"
@@ -14,6 +15,11 @@
         android:id="@+id/nav_diagnostics"
         android:icon="@android:drawable/ic_menu_info_details"
         android:title="@string/nav_diagnostics" />
+
+    <item
+        android:id="@+id/nav_byte_analyzer"
+        android:icon="@android:drawable/ic_menu_view"
+        android:title="@string/nav_byte_analyzer" />
 
     <item
         android:id="@+id/nav_settings"
